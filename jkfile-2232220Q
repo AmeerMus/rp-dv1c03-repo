@@ -1,0 +1,49 @@
+pipeline {
+    agent {
+        node {
+            label 'master'
+        }
+    }
+    options {
+        buildDiscarder logRotator( 
+                    daysToKeepStr: '15', 
+                    numToKeepStr: '10'
+            )
+    }
+    environment {
+        APP_NAME = "STUDENT_APP"
+        APP_ENV  = "DEV"
+    }
+    stages {
+        stage('ST1-223220Q') {
+            steps {
+                echo "ST1-2232220Q:Setup Release Environment Completed."
+
+            }
+        }
+        stage('ST2-2232220Q') {
+            steps {
+                checkout([
+                    sh """
+                    docker rm -rf svr-223220Q || true
+                    docker run -d --name svr-2232220Q -p 32900:8080 img-base-2232220q
+                    echo "ST2-2232220Q: Server Setup Completed
+                    """
+
+                ])
+            }
+        }
+        stage('Code Build') {
+            steps {
+                 sh 'mvn install -Dmaven.test.skip=false'
+            }
+        }
+        stage('Printing All Global Variables') {
+            steps {
+                sh """
+                env
+                """
+            }
+        }
+    }   
+}
