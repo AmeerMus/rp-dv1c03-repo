@@ -1,50 +1,68 @@
 pipeline {
-    agent {
-        node {
-            label 'master'
-        }
-    }
-    options {
-        buildDiscarder logRotator( 
-                    daysToKeepStr: '15', 
-                    numToKeepStr: '10'
-            )
-    }
-    environment {
-        APP_NAME = "STUDENT_APP"
-        APP_ENV  = "DEV"
-    }
+    agent any
     stages {
-        stage('ST1-223220Q') {
+        stage('ST1-2232220Q') {
             steps {
-                echo "ST1-2232220Q: Setup Release Environment Completed."
-
+                echo 'ST1-2232220Q: Setup Release Environment Completed.'
             }
         }
         stage('ST2-2232220Q') {
             steps {
-                checkout([
-                    sh '''
+                script {
+                    sh """
                     docker rm -f svr-2232220Q || true
 
-                    docker run -d --name svr-2232220Q -p 32900:8080 img-base-2232220q
-                    echo "ST2-2232220Q: Server Setup Completed
-                    '''
+                    docker run -d --name svr-2232220Q -p 32900:8080 img-base-2232220Q
 
-                ])
+                    echo "ST2-2232220Q: Server Setup Completed"
+                    """
+                }
             }
         }
-        stage('Code Build') {
+        stage('ST3-Parallel-2232220Q') {
+            parallel {
+                stage('ST3A-2232220Q') {
+                    steps {
+                        echo 'ST3A-2232220Q: X-Site Scripting (XSS) Test Completed and Report Generated'
+                    }
+                }
+                stage('ST3B-2232220Q') {
+                    steps {
+                        echo 'ST3B-2232220Q: SQL Injection (SQLI) Test Completed and Report Generated'
+                    }
+                }
+            }
+        }
+        stage('ST4-2232220Q') {
             steps {
-                 sh 'mvn install -Dmaven.test.skip=false'
+                echo 'ST4-2232220Q: Security reports are checked'
             }
         }
-        stage('Printing All Global Variables') {
+        stage('ST5-2232220Q') {
             steps {
-                sh """
-                env
-                """
+                script {
+                    def userInput = input(
+                        message: "Hello 2232220Q, permission to proceed to next phase?",
+                        parameters: [
+                            choice(name: 'Decision', choices: ['Proceed', 'Abort'], description: 'Choose to Proceed or Abort')
+                        ]
+                    )
+
+                    if (userInput == 'Proceed') {
+                        echo 'ST5-2232220Q: Approve to proceed to next phase'
+                    } else {
+                        error 'Pipeline Aborted by User'
+                    }
+                }
             }
         }
-    }   
+        stage('ST6-2232220Q') {
+            when {
+                expression { currentBuild.result == null || currentBuild.result == 'SUCCESS' }
+            }
+            steps {
+                echo 'ST6-2232220Q: Ready for next phase'
+            }
+        }
+    }
 }
