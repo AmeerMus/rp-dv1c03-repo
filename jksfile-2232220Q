@@ -12,7 +12,7 @@ pipeline {
                     sh """
                     docker rm -f svr-2232220Q || true
 
-                    docker run -d --name svr-2232220Q -p 32900:8080 img-base-2232220Q
+                    docker run -d --name svr-2232220Q -p 3500:32900 img-base-2232220Q
 
                     echo "ST2-2232220Q: Server Setup Completed"
                     """
